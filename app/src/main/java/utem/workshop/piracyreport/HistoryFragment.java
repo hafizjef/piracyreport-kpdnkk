@@ -7,15 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * Created by max on 15/4/17.
- */
-
 public class HistoryFragment extends Fragment {
 
     public static HistoryFragment newInstance() {
-        HistoryFragment fragment = new HistoryFragment();
-        return fragment;
+        return new HistoryFragment();
     }
 
     @Nullable
@@ -24,8 +19,6 @@ public class HistoryFragment extends Fragment {
         //Bundle args = getArguments();
         //int tabPosition = args.getInt(TAB_POSITION);
 
-        View view = inflater.inflate(R.layout.report_hitory, container, false);
-
-        return view;
+        return inflater.inflate(R.layout.report_history, container, false);
     }
 }
