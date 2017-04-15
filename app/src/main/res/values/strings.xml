@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PiracyReport</string>
+    <string name="action_login">Staff Login</string>
+    <string name="titleName">Piracy Report</string>
+</resources>
