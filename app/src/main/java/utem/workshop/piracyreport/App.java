@@ -1,9 +1,8 @@
 package utem.workshop.piracyreport;
 
 import android.app.Application;
-import android.os.SystemClock;
 
-import java.util.concurrent.TimeUnit;
+import timber.log.Timber;
 
 public class App extends Application {
 
@@ -11,7 +10,8 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // Don't do this! This is just so cold launches take some time
-        SystemClock.sleep(TimeUnit.SECONDS.toMillis(3));
+        if(BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
     }
 }
