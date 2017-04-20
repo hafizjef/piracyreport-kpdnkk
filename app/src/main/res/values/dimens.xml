@@ -1,3 +1,5 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="imv_height">112dp</dimen>
+    <dimen name="imv_width">112dp</dimen>
 </resources>

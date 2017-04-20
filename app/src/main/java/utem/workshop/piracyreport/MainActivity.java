@@ -20,12 +20,15 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements DataManager{
 
     private static final String CURRENT_STEP_POSITION_KEY = "position";
-    private static final String DATA = "data";
+    private static final String NAME = "data_name";
+    private static final String EMAIL = "data_email";
+
 
     @BindView(R.id.stepperLayout)
     StepperLayout mStepperLayout;
 
-    private String mData;
+    private String name, email, category, type, desc = null;
+    private int lat, lon = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +38,13 @@ public class MainActivity extends AppCompatActivity implements DataManager{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        int startingStepPosition = savedInstanceState != null ? savedInstanceState.getInt(CURRENT_STEP_POSITION_KEY) : 0;
-        mData = savedInstanceState != null ? savedInstanceState.getString(DATA) : null;
+        int startingStepPosition = 0;
+
+        if (savedInstanceState !=null) {
+            startingStepPosition = savedInstanceState.getInt(CURRENT_STEP_POSITION_KEY);
+            name = savedInstanceState.getString(NAME);
+            email = savedInstanceState.getString(EMAIL);
+        }
         mStepperLayout.setAdapter(new FormFragmentAdapter(getSupportFragmentManager(), this), startingStepPosition);
 
     }
@@ -44,7 +52,8 @@ public class MainActivity extends AppCompatActivity implements DataManager{
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt(CURRENT_STEP_POSITION_KEY, mStepperLayout.getCurrentStepPosition());
-        outState.putString(DATA, mData);
+        outState.putString(NAME, name);
+        outState.putString(EMAIL, email);
         super.onSaveInstanceState(outState);
     }
 
@@ -79,13 +88,73 @@ public class MainActivity extends AppCompatActivity implements DataManager{
     }
 
     @Override
-    public void saveData(String data) {
-        mData = data;
+    public void saveEmail(String email) {
+        this.email = email;
     }
 
     @Override
-    public String getData() {
-        return mData;
+    public void saveName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void saveCategory(String category) {
+
+    }
+
+    @Override
+    public void saveCatType(String type) {
+
+    }
+
+    @Override
+    public void saveDesc(String description) {
+
+    }
+
+    @Override
+    public void saveLat(int latitude) {
+
+    }
+
+    @Override
+    public void saveLon(int longitude) {
+
+    }
+
+    @Override
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getCategory() {
+        return null;
+    }
+
+    @Override
+    public String getType() {
+        return null;
+    }
+
+    @Override
+    public String getDesc() {
+        return null;
+    }
+
+    @Override
+    public int getLat() {
+        return 0;
+    }
+
+    @Override
+    public int getLon() {
+        return 0;
     }
 
     static class FormFragmentAdapter extends AbstractFragmentStepAdapter {
@@ -98,13 +167,15 @@ public class MainActivity extends AppCompatActivity implements DataManager{
         public Step createStep(@IntRange(from = 0L) int position) {
             switch (position) {
                 case 0: return FormFragment.newInstance();
+                case 1: return ImageFragment.newInstance();
+                case 2: return ViewFormFragment.newInstance();
                 default: return FormFragment.newInstance();
             }
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
     }
 }

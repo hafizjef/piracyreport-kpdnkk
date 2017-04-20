@@ -1,10 +1,20 @@
 package utem.workshop.piracyreport;
 
-/**
- * Created by max on 20/4/17.
- */
-
 public interface DataManager {
-    void saveData(String data);
-    String getData();
+    void saveEmail(String email);
+    void saveName(String name);
+    void saveCategory(String category);
+    void saveCatType(String type);
+    void saveDesc(String description);
+    void saveLat(int latitude);
+    void saveLon(int longitude);
+
+
+    String getEmail();
+    String getName();
+    String getCategory();
+    String getType();
+    String getDesc();
+    int getLat();
+    int getLon();
 }
