@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="utem.workshop.piracyreport.MainActivity">
@@ -23,14 +24,14 @@
 
     <com.stepstone.stepper.StepperLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/stepperLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:ms_stepperType="progress_bar"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:ms_activeStepColor="@color/colorAccent"
         app:ms_bottomNavigationBackground="@color/colorPrimary"
-        app:ms_activeStepColor="@color/colorAccent"/>
+        app:ms_stepperType="progress_bar" />
 
 
 </android.support.design.widget.CoordinatorLayout>

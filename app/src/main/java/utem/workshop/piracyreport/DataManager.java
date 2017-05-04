@@ -4,17 +4,20 @@ public interface DataManager {
     void saveEmail(String email);
     void saveName(String name);
     void saveCategory(String category);
-    void saveCatType(String type);
+    void saveBrand(String brand);
     void saveDesc(String description);
-    void saveLat(int latitude);
-    void saveLon(int longitude);
-
+    void saveAddr(String addr);
+    void saveState(String state);
+    void saveLat(double latitude);
+    void saveLon(double longitude);
 
     String getEmail();
     String getName();
     String getCategory();
-    String getType();
+    String getBrand();
     String getDesc();
-    int getLat();
-    int getLon();
+    String getState();
+    String getAddr();
+    double getLat();
+    double getLon();
 }

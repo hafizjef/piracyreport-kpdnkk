@@ -17,7 +17,7 @@ import com.stepstone.stepper.adapter.AbstractFragmentStepAdapter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements DataManager{
+public class MainActivity extends AppCompatActivity implements DataManager {
 
     private static final String CURRENT_STEP_POSITION_KEY = "position";
     private static final String NAME = "data_name";
@@ -27,8 +27,10 @@ public class MainActivity extends AppCompatActivity implements DataManager{
     @BindView(R.id.stepperLayout)
     StepperLayout mStepperLayout;
 
-    private String name, email, category, type, desc = null;
-    private int lat, lon = 0;
+    private String
+            name, email, category,
+            brand, desc, state, addr = null;
+    private double lat, lon = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements DataManager{
 
         int startingStepPosition = 0;
 
-        if (savedInstanceState !=null) {
+        if (savedInstanceState != null) {
             startingStepPosition = savedInstanceState.getInt(CURRENT_STEP_POSITION_KEY);
             name = savedInstanceState.getString(NAME);
             email = savedInstanceState.getString(EMAIL);
@@ -99,27 +101,37 @@ public class MainActivity extends AppCompatActivity implements DataManager{
 
     @Override
     public void saveCategory(String category) {
-
+        this.category = category;
     }
 
     @Override
-    public void saveCatType(String type) {
-
+    public void saveBrand(String brand) {
+        this.brand = brand;
     }
 
     @Override
     public void saveDesc(String description) {
-
+        this.desc = description;
     }
 
     @Override
-    public void saveLat(int latitude) {
-
+    public void saveAddr(String addr) {
+        this.addr = addr;
     }
 
     @Override
-    public void saveLon(int longitude) {
+    public void saveState(String state) {
+        this.state = state;
+    }
 
+    @Override
+    public void saveLat(double latitude) {
+        this.lat = latitude;
+    }
+
+    @Override
+    public void saveLon(double longitude) {
+        this.lon = longitude;
     }
 
     @Override
@@ -134,27 +146,37 @@ public class MainActivity extends AppCompatActivity implements DataManager{
 
     @Override
     public String getCategory() {
-        return null;
+        return category;
     }
 
     @Override
-    public String getType() {
-        return null;
+    public String getBrand() {
+        return brand;
     }
 
     @Override
     public String getDesc() {
-        return null;
+        return desc;
     }
 
     @Override
-    public int getLat() {
-        return 0;
+    public String getState() {
+        return state;
     }
 
     @Override
-    public int getLon() {
-        return 0;
+    public String getAddr() {
+        return addr;
+    }
+
+    @Override
+    public double getLat() {
+        return lat;
+    }
+
+    @Override
+    public double getLon() {
+        return lon;
     }
 
     static class FormFragmentAdapter extends AbstractFragmentStepAdapter {
@@ -166,16 +188,20 @@ public class MainActivity extends AppCompatActivity implements DataManager{
         @Override
         public Step createStep(@IntRange(from = 0L) int position) {
             switch (position) {
-                case 0: return FormFragment.newInstance();
-                case 1: return ImageFragment.newInstance();
-                case 2: return ViewFormFragment.newInstance();
-                default: return FormFragment.newInstance();
+                case 0:
+                    return FormFragment.newInstance();
+                case 1:
+                    return ViewFormFragment.newInstance();
+                case 2:
+                    return ViewFormFragment.newInstance();
+                default:
+                    return FormFragment.newInstance();
             }
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 2;
         }
     }
 }

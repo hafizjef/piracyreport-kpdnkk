@@ -2,4 +2,6 @@
     <string name="app_name">Piracy Report</string>
     <string name="action_login">Staff Login</string>
     <string name="titleName">PiracyReport</string>
+    <string name="title_activity_location_picker">Pick location</string>
+    <string name="btnAttach">Attach Images</string>
 </resources>
