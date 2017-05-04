@@ -1,5 +1,7 @@
 package utem.workshop.piracyreport;
 
+import java.util.ArrayList;
+
 /**
  * Created by max on 21/4/17.
  */
@@ -7,6 +9,8 @@ package utem.workshop.piracyreport;
 public class Report {
     String name, email, category,
             brand, description, address, state;
+
+    ArrayList<String> imgURL;
 
     double lat, lon;
 
@@ -85,5 +89,13 @@ public class Report {
 
     public void setLon(double lon) {
         this.lon = lon;
+    }
+
+    public ArrayList<String> getImgURL() {
+        return imgURL;
+    }
+
+    public void setImgURL(ArrayList<String> imgURL) {
+        this.imgURL = imgURL;
     }
 }
