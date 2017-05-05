@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,6 +37,10 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import id.zelory.compressor.Compressor;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 import static android.app.Activity.RESULT_OK;
@@ -43,33 +48,26 @@ import static android.app.Activity.RESULT_OK;
 @SuppressWarnings("VisibleForTests")
 public class ViewFormFragment extends Fragment implements BlockingStep {
 
-    ArrayList<Image> images;
-    private StorageReference mStorageRef;
+    int totalImage = 0;
 
+    ArrayList<Image> images;
     @BindView(R.id.vName)
     TextView vName;
-
     @BindView(R.id.vEmail)
     TextView vEmail;
-
     @BindView(R.id.vAddress)
     TextView vAddress;
-
     @BindView(R.id.btnAddImg)
     Button btnAddImg;
-
     @BindView(R.id.imgView1)
     ImageView imgV1;
-
     @BindView(R.id.imgView2)
     ImageView imgV2;
-
     @BindView(R.id.imgView3)
     ImageView imgV3;
-
     @BindView(R.id.imgView4)
     ImageView imgV4;
-
+    private StorageReference mStorageRef;
     private DataManager dataManager;
 
     public static ViewFormFragment newInstance() {
@@ -148,6 +146,8 @@ public class ViewFormFragment extends Fragment implements BlockingStep {
     @Override
     public void onCompleteClicked(StepperLayout.OnCompleteClickedCallback callback) {
 
+        totalImage = 0;
+
         final ProgressDialog progress = new ProgressDialog(getContext());
         progress.setTitle("Loading");
         progress.setMessage("Submitting report...");
@@ -168,57 +168,73 @@ public class ViewFormFragment extends Fragment implements BlockingStep {
         Toast.makeText(getContext(), "Submitting Report...", Toast.LENGTH_LONG).show();
 
         for (int index = 0; index < images.size(); index++) {
-            Uri file = Uri.fromFile(new File(images.get(index).getPath()));
-            UploadTask uploadTask = mStorageRef.child("images/" + file.getLastPathSegment()).putFile(file);
 
-            final int finalIndex = index;
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @SuppressWarnings("VisibleForTests")
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Timber.i(taskSnapshot.getDownloadUrl().toString());
-                    imgURL.add(taskSnapshot.getDownloadUrl().toString());
+            Compressor.getDefault(getContext())
+                    .compressToFileAsObservable(new File(images.get(index).getPath()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<File>() {
+                        @Override
+                        public void call(File imgConverted) {
+                            Uri file = Uri.fromFile(imgConverted);
+                            UploadTask uploadTask = mStorageRef.child("images/" + System.currentTimeMillis() + "." +
+                                    MimeTypeMap.getFileExtensionFromUrl(file.getLastPathSegment())).putFile(file);
 
-                    if (finalIndex == images.size() - 1) {
-                        rs.setImgURL(imgURL);
-                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("reports");
-                        String reportId = mDatabase.push().getKey();
+                            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @SuppressWarnings("VisibleForTests")
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Timber.i("Uploaded -> " + totalImage + taskSnapshot.getDownloadUrl().toString());
+                                    imgURL.add(taskSnapshot.getDownloadUrl().toString());
 
-                        mDatabase.child(reportId).setValue(rs, new DatabaseReference.CompletionListener() {
+                                    if (totalImage == (images.size() - 1)) {
+                                        rs.setImgURL(imgURL);
+                                        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("reports");
+                                        String reportId = mDatabase.push().getKey();
 
-                            @Override
-                            public void onComplete(DatabaseError databaseError,
-                                                   DatabaseReference databaseReference) {
-                                if (databaseError != null) {
-                                    Toast.makeText(getContext(), "Error, " + databaseError
-                                            .getMessage(), Toast.LENGTH_LONG);
-                                } else {
-                                    try {
-                                        Toast.makeText(getContext(),
-                                                "Report successfully submitted!",
-                                                Toast.LENGTH_LONG).show();
-                                    } catch (Exception e) {
+                                        mDatabase.child(reportId).setValue(rs, new DatabaseReference.CompletionListener() {
 
+                                            @Override
+                                            public void onComplete(DatabaseError databaseError,
+                                                                   DatabaseReference databaseReference) {
+                                                if (databaseError != null) {
+                                                    Toast.makeText(getContext(), "Error, " + databaseError
+                                                            .getMessage(), Toast.LENGTH_LONG);
+                                                } else {
+                                                    try {
+                                                        Toast.makeText(getContext(),
+                                                                "Report successfully submitted!",
+                                                                Toast.LENGTH_LONG).show();
+                                                    } catch (Exception e) {
+
+                                                    }
+                                                }
+                                                progress.dismiss();
+                                                Intent intent = new Intent(getContext(), MainActivity.class);
+                                                startActivity(intent);
+                                                getActivity().finish();
+                                            }
+                                        });
                                     }
+                                    totalImage += 1;
                                 }
-                                progress.dismiss();
-                                Intent intent = new Intent(getContext(), MainActivity.class);
-                                startActivity(intent);
-                                getActivity().finish();
-                            }
-                        });
-                    }
-                }
-            });
+                            });
 
-            uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    double progDone = (100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    progress.setMessage("Uploading images... " + (finalIndex + 1) + "/" +
-                            images.size() + " " + progDone + "%");
-                }
-            });
+                            uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                    double progDone = (100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                                    progress.setMessage("Uploading images... " + (totalImage + 1) + "/" +
+                                            images.size() + " " + progDone + "%");
+                                }
+                            });
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+
+                        }
+                    });
         }
         callback.complete();
     }
