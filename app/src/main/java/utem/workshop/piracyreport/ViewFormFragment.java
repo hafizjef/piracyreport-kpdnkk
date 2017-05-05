@@ -202,6 +202,9 @@ public class ViewFormFragment extends Fragment implements BlockingStep {
                                     }
                                 }
                                 progress.dismiss();
+                                Intent intent = new Intent(getContext(), MainActivity.class);
+                                startActivity(intent);
+                                getActivity().finish();
                             }
                         });
                     }
@@ -227,6 +230,10 @@ public class ViewFormFragment extends Fragment implements BlockingStep {
 
     @Override
     public VerificationError verifyStep() {
+
+        if (images == null) {
+            return new VerificationError("No Image selected!");
+        }
         return null;
     }
 
@@ -240,6 +247,7 @@ public class ViewFormFragment extends Fragment implements BlockingStep {
 
     @Override
     public void onError(@NonNull VerificationError error) {
-
+        Toast.makeText(getContext(), "Error: " + error.getErrorMessage(), Toast.LENGTH_LONG)
+                .show();
     }
 }
