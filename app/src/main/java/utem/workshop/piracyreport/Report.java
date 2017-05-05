@@ -14,6 +14,8 @@ public class Report {
 
     double lat, lon;
 
+    public Report(){}
+
     public Report(String name, String email) {
         this.name = name;
         this.email = email;
