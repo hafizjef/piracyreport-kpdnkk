@@ -30,19 +30,15 @@ import timber.log.Timber;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
-
     @BindView(R.id.toolbarLogin)
     Toolbar loginToolbar;
-
     @BindView(R.id.btnLogin)
     Button btnLogin;
-
     @BindView(R.id.etUsername)
     TextInputEditText etEmail;
-
     @BindView(R.id.etPassword)
     TextInputEditText etPassword;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

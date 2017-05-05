@@ -41,27 +41,19 @@ import static android.app.Activity.RESULT_OK;
 public class FormFragment extends Fragment implements BlockingStep {
 
     AlertDialog selectionDialog;
-
-    private String[] items = {"Clothing","Printed Materials","Software"};
-
     @BindView(R.id.nameField)
     EditText mNameField;
-
     @BindView(R.id.emailField)
     EditText mEmailField;
-
     @BindView(R.id.typeField)
     EditText mTypeField;
-
     @BindView(R.id.locationField)
     EditText mLocationField;
-
     @BindView(R.id.brandField)
     EditText mBrandField;
-
     @BindView(R.id.descField)
     EditText mDescField;
-
+    private String[] items = {"Clothing", "Printed Materials", "Software"};
     private DataManager dataManager;
 
     public static FormFragment newInstance() {

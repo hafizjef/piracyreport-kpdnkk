@@ -13,11 +13,11 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        if(!FirebaseApp.getApps(this).isEmpty()) {
+        if (!FirebaseApp.getApps(this).isEmpty()) {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         }
 
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
     }

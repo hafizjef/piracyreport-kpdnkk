@@ -25,15 +25,12 @@ import timber.log.Timber;
 
 public class ImageFragment extends Fragment implements BlockingStep {
 
-    private int totalImage = 0;
-    private DataManager dataManager;
-
-
     @BindView(R.id.imageView)
     ImageView iv1;
-
     @BindView(R.id.linearLayout)
     LinearLayout linearLayout;
+    private int totalImage = 0;
+    private DataManager dataManager;
 
     public static ImageFragment newInstance() {
         return new ImageFragment();
