@@ -1,4 +1,4 @@
-package utem.workshop.piracyreport;
+package utem.workshop.piracyreport.utils;
 
 public interface DataManager {
     void saveEmail(String email);

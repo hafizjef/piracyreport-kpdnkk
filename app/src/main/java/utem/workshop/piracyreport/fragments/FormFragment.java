@@ -1,4 +1,4 @@
-package utem.workshop.piracyreport;
+package utem.workshop.piracyreport.fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,6 +34,8 @@ import com.stepstone.stepper.VerificationError;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+import utem.workshop.piracyreport.R;
+import utem.workshop.piracyreport.utils.DataManager;
 
 import static android.app.Activity.RESULT_OK;
 

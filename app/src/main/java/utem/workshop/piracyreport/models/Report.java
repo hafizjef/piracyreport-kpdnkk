@@ -1,18 +1,24 @@
-package utem.workshop.piracyreport;
+package utem.workshop.piracyreport.models;
+
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 
-/**
- * Created by max on 21/4/17.
- */
+import utem.workshop.piracyreport.utils.Constants;
 
+@Parcel
 public class Report {
     String name, email, category,
             brand, description, address, state;
 
+    String assigned = Constants.NOT_ASSIGNED;
+    String status = Constants.ACTION_QUEUE;
+    String remark = "";
+
     ArrayList<String> imgURL;
 
     double lat, lon;
+    long timeStamp;
 
     public Report() {
     }
@@ -100,5 +106,37 @@ public class Report {
 
     public void setImgURL(ArrayList<String> imgURL) {
         this.imgURL = imgURL;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public String getAssigned() {
+        return assigned;
+    }
+
+    public void setAssigned(String staffName) {
+        this.assigned = staffName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

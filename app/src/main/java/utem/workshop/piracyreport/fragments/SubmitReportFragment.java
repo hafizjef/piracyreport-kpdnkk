@@ -1,4 +1,4 @@
-package utem.workshop.piracyreport;
+package utem.workshop.piracyreport.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -42,11 +42,16 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
+import utem.workshop.piracyreport.MainActivity;
+import utem.workshop.piracyreport.R;
+import utem.workshop.piracyreport.models.Report;
+import utem.workshop.piracyreport.utils.DataManager;
+import utem.workshop.piracyreport.utils.Utils;
 
 import static android.app.Activity.RESULT_OK;
 
 @SuppressWarnings("VisibleForTests")
-public class ViewFormFragment extends Fragment implements BlockingStep {
+public class SubmitReportFragment extends Fragment implements BlockingStep {
 
     int totalImage = 0;
 
@@ -70,8 +75,8 @@ public class ViewFormFragment extends Fragment implements BlockingStep {
     private StorageReference mStorageRef;
     private DataManager dataManager;
 
-    public static ViewFormFragment newInstance() {
-        return new ViewFormFragment();
+    public static SubmitReportFragment newInstance() {
+        return new SubmitReportFragment();
     }
 
     @Nullable
@@ -86,7 +91,7 @@ public class ViewFormFragment extends Fragment implements BlockingStep {
         btnAddImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImagePicker.create(ViewFormFragment.this)
+                ImagePicker.create(SubmitReportFragment.this)
                         .folderMode(true)
                         .limit(4)
                         .start(99);
@@ -164,6 +169,7 @@ public class ViewFormFragment extends Fragment implements BlockingStep {
         rs.setLat(dataManager.getLat());
         rs.setLon(dataManager.getLon());
         rs.setState(dataManager.getState());
+        rs.setTimeStamp(System.currentTimeMillis());
 
         Toast.makeText(getContext(), "Submitting Report...", Toast.LENGTH_LONG).show();
 

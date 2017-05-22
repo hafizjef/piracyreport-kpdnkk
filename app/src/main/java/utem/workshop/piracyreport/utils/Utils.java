@@ -1,4 +1,4 @@
-package utem.workshop.piracyreport;
+package utem.workshop.piracyreport.utils;
 
 import android.app.Activity;
 import android.view.inputmethod.InputMethodManager;

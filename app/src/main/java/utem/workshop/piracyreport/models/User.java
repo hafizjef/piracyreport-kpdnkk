@@ -1,8 +1,5 @@
-package utem.workshop.piracyreport;
+package utem.workshop.piracyreport.models;
 
-/**
- * Created by max on 5/5/17.
- */
 
 public class User {
     public String name;

@@ -1,4 +1,4 @@
-package utem.workshop.piracyreport;
+package utem.workshop.piracyreport.loaders;
 
 import android.app.Application;
 
@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
 
 import timber.log.Timber;
+import utem.workshop.piracyreport.BuildConfig;
 
 public class App extends Application {
 

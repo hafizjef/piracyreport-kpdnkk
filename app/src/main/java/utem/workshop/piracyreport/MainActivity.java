@@ -17,6 +17,9 @@ import com.stepstone.stepper.adapter.AbstractFragmentStepAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import utem.workshop.piracyreport.fragments.FormFragment;
+import utem.workshop.piracyreport.fragments.SubmitReportFragment;
+import utem.workshop.piracyreport.utils.DataManager;
 
 public class MainActivity extends AppCompatActivity implements DataManager {
 
@@ -194,9 +197,7 @@ public class MainActivity extends AppCompatActivity implements DataManager {
                 case 0:
                     return FormFragment.newInstance();
                 case 1:
-                    return ViewFormFragment.newInstance();
-                case 2:
-                    return ViewFormFragment.newInstance();
+                    return SubmitReportFragment.newInstance();
                 default:
                     return FormFragment.newInstance();
             }
