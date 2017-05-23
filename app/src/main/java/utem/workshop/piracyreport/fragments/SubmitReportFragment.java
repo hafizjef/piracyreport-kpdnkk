@@ -2,6 +2,7 @@ package utem.workshop.piracyreport.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -157,6 +158,12 @@ public class SubmitReportFragment extends Fragment implements BlockingStep {
         progress.setTitle("Loading");
         progress.setMessage("Submitting report...");
         progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
         progress.show();
 
         final ArrayList<String> imgURL = new ArrayList<>();
@@ -183,8 +190,15 @@ public class SubmitReportFragment extends Fragment implements BlockingStep {
                         @Override
                         public void call(File imgConverted) {
                             Uri file = Uri.fromFile(imgConverted);
-                            UploadTask uploadTask = mStorageRef.child("images/" + System.currentTimeMillis() + "." +
+                            final UploadTask uploadTask = mStorageRef.child("images/" + System.currentTimeMillis() + "." +
                                     MimeTypeMap.getFileExtensionFromUrl(file.getLastPathSegment())).putFile(file);
+
+                            progress.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    uploadTask.cancel();
+                                }
+                            });
 
                             uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @SuppressWarnings("VisibleForTests")
@@ -208,6 +222,7 @@ public class SubmitReportFragment extends Fragment implements BlockingStep {
                                                             .getMessage(), Toast.LENGTH_LONG);
                                                 } else {
                                                     try {
+                                                        Utils.mailReport(rs);
                                                         Toast.makeText(getContext(),
                                                                 "Report successfully submitted!",
                                                                 Toast.LENGTH_LONG).show();
