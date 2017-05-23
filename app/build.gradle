@@ -44,6 +44,7 @@ dependencies {
     compile 'org.parceler:parceler-api:1.1.8'
     annotationProcessor 'org.parceler:parceler:1.1.8'
     compile 'me.grantland:autofittextview:0.2.+'
+    compile 'com.afollestad.material-dialogs:commons:0.9.4.5'
 }
 
 apply plugin: 'com.google.gms.google-services'
