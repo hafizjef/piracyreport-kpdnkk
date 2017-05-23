@@ -19,11 +19,11 @@ import timber.log.Timber;
  * 2. Check for login-state
  * 3. Redirect to defined view
  * 4. Database initialization
-**/
+ **/
 
 public class SplashActivity extends AppCompatActivity {
-    private boolean isAdmin = false;
     Intent intent;
+    private boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class SplashActivity extends AppCompatActivity {
 
             mData.keepSynced(true);
 
-            mData.child("keep-sync").setValue("delete-this", new DatabaseReference.CompletionListener() {
+            mData.child("keepSync").setValue(true, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                     mData.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -49,7 +49,7 @@ public class SplashActivity extends AppCompatActivity {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             Timber.i("Name: " + dataSnapshot.child("name").getValue());
                             Timber.i("Is Admin: " + dataSnapshot.child("isAdmin").getValue());
-                            isAdmin = (boolean)dataSnapshot.child("isAdmin").getValue();
+                            isAdmin = (boolean) dataSnapshot.child("isAdmin").getValue();
 
                             if (isAdmin) {
                                 intent = new Intent(getBaseContext(), AdminActivity.class);

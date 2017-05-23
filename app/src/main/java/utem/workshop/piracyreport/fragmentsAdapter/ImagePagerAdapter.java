@@ -20,7 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import utem.workshop.piracyreport.R;
 
-public class ImagePagerAdapter extends PagerAdapter{
+public class ImagePagerAdapter extends PagerAdapter {
 
     @BindView(R.id.imageView)
     ImageView imageView;

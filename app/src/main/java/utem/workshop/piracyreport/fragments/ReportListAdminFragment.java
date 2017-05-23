@@ -6,8 +6,10 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -15,7 +17,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.parceler.Parcel;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -32,10 +33,15 @@ import utem.workshop.piracyreport.utils.Constants;
 
 public class ReportListAdminFragment extends Fragment {
 
+    public static final String ARG_PAGE = "ARG_PAGE";
+    ArrayList<Report> reports = new ArrayList<>();
+    ArrayList<Report> noAssignReport = new ArrayList<>();
+    ReportsAdapter adapter = new ReportsAdapter(getContext(), reports);
+    ReportsAdapter noAssignAdapter = new ReportsAdapter(getContext(), noAssignReport);
     @BindView(R.id.rvReportList)
     RecyclerView rvReportList;
-
-    public static final String ARG_PAGE = "ARG_PAGE";
+    @BindView(R.id.emptyView)
+    TextView emptyView;
     private int mPage;
 
     public static ReportListAdminFragment newInstance(int page) {
@@ -47,9 +53,35 @@ public class ReportListAdminFragment extends Fragment {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_unassigned:
+                item.setChecked(!item.isChecked());
+                if (item.isChecked()) {
+                    refreshView(true);
+                } else {
+                    refreshView(false);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void refreshView(boolean show) {
+
+        if (show) {
+            rvReportList.swapAdapter(noAssignAdapter, false);
+        } else {
+            rvReportList.swapAdapter(adapter, false);
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPage = getArguments().getInt(ARG_PAGE);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -60,8 +92,6 @@ public class ReportListAdminFragment extends Fragment {
         View view = inflater.inflate(R.layout.report_list_admin, container, false);
         ButterKnife.bind(this, view);
 
-        final ArrayList<Report> reports = new ArrayList<>();
-        final ReportsAdapter adapter = new ReportsAdapter(getContext(), reports);
 
         DatabaseReference mData = FirebaseDatabase.getInstance().getReference("reports");
         mData.addValueEventListener(new ValueEventListener() {
@@ -69,10 +99,26 @@ public class ReportListAdminFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Re-init
                 reports.clear();
-                for (DataSnapshot postSnap: dataSnapshot.getChildren()) {
+                noAssignReport.clear();
+
+                for (DataSnapshot postSnap : dataSnapshot.getChildren()) {
                     Report report = postSnap.getValue(Report.class);
+                    report.setReportID(postSnap.getKey());
+
                     reports.add(report);
+
+                    if (report.getAssigned().equals(Constants.NOT_ASSIGNED)) {
+                        noAssignReport.add(report);
+                    }
                 }
+                if (reports.isEmpty()) {
+                    rvReportList.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                } else {
+                    rvReportList.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                }
+                noAssignAdapter.notifyDataSetChanged();
                 adapter.notifyDataSetChanged();
             }
 

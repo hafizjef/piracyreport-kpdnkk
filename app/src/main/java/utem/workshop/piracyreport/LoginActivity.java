@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                                             Timber.i("Is Admin: " + dataSnapshot.child("isAdmin").getValue());
 
 
-                                            if ((boolean)dataSnapshot.child("isAdmin").getValue()) {
+                                            if ((boolean) dataSnapshot.child("isAdmin").getValue()) {
                                                 intent = new Intent(getBaseContext(), AdminActivity.class);
                                             } else {
                                                 intent = new Intent(getBaseContext(), MainActivity.class);

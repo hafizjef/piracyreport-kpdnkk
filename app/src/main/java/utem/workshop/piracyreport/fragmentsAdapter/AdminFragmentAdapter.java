@@ -14,7 +14,7 @@ import utem.workshop.piracyreport.fragments.ReportListAdminFragment;
 public class AdminFragmentAdapter extends FragmentPagerAdapter {
 
     final int PAGE_COUNT = 2;
-    private String tabTitles[] = new String[] { "Reports", "Overview"};
+    private String tabTitles[] = new String[]{"Reports", "Overview"};
     private Context context;
 
     public AdminFragmentAdapter(FragmentManager fm, Context context) {
@@ -24,9 +24,11 @@ public class AdminFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch(position) {
-            case 0 : return ReportListAdminFragment.newInstance(position);
-            default: return ReportListAdminFragment.newInstance(position);
+        switch (position) {
+            case 0:
+                return ReportListAdminFragment.newInstance(position);
+            default:
+                return ReportListAdminFragment.newInstance(position);
         }
     }
 

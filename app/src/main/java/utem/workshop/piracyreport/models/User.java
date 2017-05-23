@@ -2,23 +2,26 @@ package utem.workshop.piracyreport.models;
 
 
 public class User {
-    public String name;
-    public boolean isAdmin;
 
-    public User(String name) {
-        this.name = name;
+    String staffUID;
+    String staffName;
+    boolean isAdmin;
+    boolean keepSync;
+
+    public User(String staffName) {
+        this.staffName = staffName;
     }
 
     public User() {
 
     }
 
-    public String getName() {
-        return name;
+    public String getStaffName() {
+        return staffName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStaffName(String staffName) {
+        this.staffName = staffName;
     }
 
     public boolean isAdmin() {
@@ -27,5 +30,21 @@ public class User {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public String getStaffUID() {
+        return staffUID;
+    }
+
+    public void setStaffUID(String staffUID) {
+        this.staffUID = staffUID;
+    }
+
+    public boolean isKeepSync() {
+        return keepSync;
+    }
+
+    public void setKeepSync(boolean keepSync) {
+        this.keepSync = keepSync;
     }
 }

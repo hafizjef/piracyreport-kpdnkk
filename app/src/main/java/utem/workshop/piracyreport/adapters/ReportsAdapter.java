@@ -25,53 +25,13 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
 
     private OnItemClickListener listener;
 
-    public interface OnItemClickListener {
-        void onItemClick(View itemView, int position);
+    public ReportsAdapter(Context context, List<Report> reports) {
+        mReports = reports;
+        mContext = context;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.report_addr)
-        TextView reportAddr;
-
-        @BindView(R.id.report_state)
-        TextView reportState;
-
-        @BindView(R.id.report_mail)
-        TextView reportMail;
-
-        @BindView(R.id.report_time)
-        TextView reportTime;
-
-        @BindView(R.id.report_assign)
-        TextView reportAssigned;
-
-        public ViewHolder(final View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION) {
-                            listener.onItemClick(itemView, position);
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    public ReportsAdapter(Context context, List<Report> reports) {
-        mReports = reports;
-        mContext = context;
     }
 
     private Context getContext() {
@@ -108,7 +68,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
 
         tv_address.setText(report.getAddress());
         tv_state.setText(report.getState());
-        tv_assign.setText(report.getAssigned());
+        tv_assign.setText(report.getAssignedName());
         tv_mail.setText(report.getEmail());
         tv_time.setText(sdf.format(new Date(report.getTimeStamp())));
     }
@@ -116,5 +76,45 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
     @Override
     public int getItemCount() {
         return mReports.size();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.report_addr)
+        TextView reportAddr;
+
+        @BindView(R.id.report_state)
+        TextView reportState;
+
+        @BindView(R.id.report_mail)
+        TextView reportMail;
+
+        @BindView(R.id.report_time)
+        TextView reportTime;
+
+        @BindView(R.id.report_assign)
+        TextView reportAssigned;
+
+        public ViewHolder(final View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(itemView, position);
+                        }
+                    }
+                }
+            });
+        }
     }
 }

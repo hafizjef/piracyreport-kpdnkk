@@ -11,6 +11,7 @@ public class Report {
     String name, email, category,
             brand, description, address, state;
 
+    String reportID;
     String assigned = Constants.NOT_ASSIGNED;
     String status = Constants.ACTION_QUEUE;
     String remark = "";
@@ -138,5 +139,29 @@ public class Report {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getReportID() {
+        return reportID;
+    }
+
+    public void setReportID(String reportID) {
+        this.reportID = reportID;
+    }
+
+    public String getAssignedName() {
+        try {
+            return assigned.split(":")[1];
+        } catch (Exception e) {
+            return assigned;
+        }
+    }
+
+    public String getAssignedID() {
+        try {
+            return assigned.split(":")[0];
+        } catch (Exception e) {
+            return assigned;
+        }
     }
 }
