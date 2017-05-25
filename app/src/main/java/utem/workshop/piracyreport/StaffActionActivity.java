@@ -1,10 +1,12 @@
 package utem.workshop.piracyreport;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,53 +29,51 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.Call;
-import okhttp3.ResponseBody;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import timber.log.Timber;
 import utem.workshop.piracyreport.fragmentsAdapter.ImagePagerAdapter;
 import utem.workshop.piracyreport.models.Report;
 import utem.workshop.piracyreport.models.User;
 import utem.workshop.piracyreport.utils.Constants;
-import utem.workshop.piracyreport.utils.MailSender;
+import utem.workshop.piracyreport.utils.Utils;
 
-public class AssignStaffActivity extends AppCompatActivity {
+public class StaffActionActivity extends AppCompatActivity {
 
     Report report;
 
-    @BindView(R.id.image_pager)
+    @BindView(R.id.staff_image_pager)
     ViewPager image_pager;
 
-    @BindView(R.id.txAddressLine)
+    @BindView(R.id.staffTxAddressLine)
     TextView txAddressLine;
 
-    @BindView(R.id.txBrand)
+    @BindView(R.id.staffTxBrand)
     TextView txBrand;
 
-    @BindView(R.id.txCategory)
+    @BindView(R.id.staffTxCategory)
     TextView txCategory;
 
-    @BindView(R.id.txDescription)
+    @BindView(R.id.staffTxDescription)
     TextView txDescription;
 
-    @BindView(R.id.txStaffName)
+    @BindView(R.id.staffTxStaffName)
     TextView txStaffName;
 
-    @BindView(R.id.txStatus)
+    @BindView(R.id.staffTxStatus)
     TextView txStatus;
 
-    @BindView(R.id.btnAssign)
-    Button btnAssign;
+    @BindView(R.id.btnUpdate)
+    Button btnUpdate;
 
-    @BindView(R.id.toolbar)
+    @BindView(R.id.btnMap)
+    Button btnMap;
+
+    @BindView(R.id.staffActionToolbar)
     Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_assign_staff);
+        setContentView(R.layout.activity_staff_action);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -85,10 +85,10 @@ public class AssignStaffActivity extends AppCompatActivity {
             finish();
         }
 
-        if (!report.getAssigned().equals(Constants.NOT_ASSIGNED)) {
-            btnAssign.setText("Re-assign staff");
+        if (report.getStatus().equals(Constants.ACTION_RESOLVED)) {
+            btnUpdate.setEnabled(false);
         } else {
-            btnAssign.setText("Assign Staff");
+            btnUpdate.setEnabled(true);
         }
 
         ArrayList<String> mURL = report.getImgURL();
@@ -103,83 +103,59 @@ public class AssignStaffActivity extends AppCompatActivity {
         txStaffName.setText(report.getAssigned());
         txStatus.setText(report.getStatus());
 
-        final ArrayList<User> users = new ArrayList<>();
-        final ArrayList<String> staffList = new ArrayList<>();
-
         final FirebaseDatabase mDataRef = FirebaseDatabase.getInstance();
-        Query queryRef = mDataRef.getReference("users").orderByChild("isAdmin").equalTo(false);
-
-        queryRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                users.clear();
-                staffList.clear();
-
-                // Add Unassigned
-                User unassignUser = new User(Constants.NOT_ASSIGNED);
-                unassignUser.setStaffUID("0x00");
-                users.add(unassignUser);
-                staffList.add(Constants.NOT_ASSIGNED);
-
-                for (DataSnapshot dbSnap : dataSnapshot.getChildren()) {
-                    User user = dbSnap.getValue(User.class);
-                    user.setStaffUID(dbSnap.getKey());
-                    users.add(user);
-                    staffList.add(user.getStaffName());
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
         final DatabaseReference mDBUpdate = mDataRef.getReference("reports")
                 .child(report.getReportID());
 
-        btnAssign.setOnClickListener(new View.OnClickListener() {
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                new MaterialDialog.Builder(AssignStaffActivity.this)
-                        .title("Assign Report to Staff")
-                        .items(staffList)
-                        .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                new MaterialDialog.Builder(StaffActionActivity.this)
+                        .title("Update Report")
+                        .content("Do you really want to update this report to Resolved?")
+                        .inputRangeRes(0, 50, R.color.ms_errorColor)
+                        .inputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT
+                                | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_MULTI_LINE)
+                        .input("Remarks", "", new MaterialDialog.InputCallback() {
                             @Override
-                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                /**
-                                 * If you use alwaysCallSingleChoiceCallback(), which is discussed below,
-                                 * returning false here won't allow the newly selected radio button to actually be selected.
-                                 **/
+                            public void onInput(MaterialDialog dialog, final CharSequence input) {
 
                                 Map mergeUpdate = new HashMap();
 
-                                if (which==0) {
-                                    mergeUpdate.put("status", Constants.ACTION_QUEUE);
-                                    mergeUpdate.put("assigned", Constants.NOT_ASSIGNED);
-                                    mergeUpdate.put("assignedID", "0x00");
-                                } else {
-                                    mergeUpdate.put("status", Constants.ACTION_IN_PROGRESS);
-                                    mergeUpdate.put("assigned", users.get(which).getStaffName());
-                                    mergeUpdate.put("assignedID", users.get(which).getStaffUID());
-                                }
+                                mergeUpdate.put("status", Constants.ACTION_RESOLVED);
+                                mergeUpdate.put("remark", input.toString());
 
                                 mDBUpdate.updateChildren(mergeUpdate, new DatabaseReference.CompletionListener() {
                                     @Override
                                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                         if (databaseError == null) {
-                                            Toast.makeText(AssignStaffActivity.this, "Report successfully assigned", Toast.LENGTH_LONG)
+                                            Utils.mailStatusUpdate(report, input.toString());
+                                            Toast.makeText(StaffActionActivity.this, "Report status updated", Toast.LENGTH_LONG)
                                                     .show();
                                             finish();
                                         }
                                     }
                                 });
-                                return true;
+
                             }
                         })
-                        .positiveText("Assign")
+                        .positiveText("Yes")
+                        .negativeText("Cancel")
+                        .cancelable(false)
                         .show();
+
+            }
+        });
+
+        btnMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri gmIntentUri = Uri.parse("https://www.google.com/maps/dir/?api=1&destination=" + report.getLat()
+                        + "," + report.getLon());
+
+                Intent intent = new Intent(Intent.ACTION_VIEW, gmIntentUri);
+                startActivity(intent);
             }
         });
 

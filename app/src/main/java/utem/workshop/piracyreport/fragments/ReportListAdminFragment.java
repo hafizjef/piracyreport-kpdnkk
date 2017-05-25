@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +45,7 @@ public class ReportListAdminFragment extends Fragment {
     @BindView(R.id.emptyView)
     TextView emptyView;
     private int mPage;
+    private boolean showAllReports = false;
 
     public static ReportListAdminFragment newInstance(int page) {
         Bundle args = new Bundle();
@@ -53,14 +56,24 @@ public class ReportListAdminFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        menuInflater.inflate(R.menu.report_list_menu, menu);
+        super.onCreateOptionsMenu(menu, menuInflater);
+        MenuItem assignFilter = menu.findItem(R.id.item_unassigned);
+        assignFilter.setChecked(showAllReports);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_unassigned:
                 item.setChecked(!item.isChecked());
                 if (item.isChecked()) {
-                    refreshView(true);
+                    showAllReports = true;
+                    refreshView();
                 } else {
-                    refreshView(false);
+                    showAllReports = false;
+                    refreshView();
                 }
                 return true;
             default:
@@ -68,13 +81,19 @@ public class ReportListAdminFragment extends Fragment {
         }
     }
 
-    private void refreshView(boolean show) {
+    private void refreshView() {
 
-        if (show) {
-            rvReportList.swapAdapter(noAssignAdapter, false);
-        } else {
+        if (showAllReports) {
             rvReportList.swapAdapter(adapter, false);
+            rvReportList.setAdapter(adapter);
+        } else {
+            rvReportList.swapAdapter(noAssignAdapter, false);
+            rvReportList.setAdapter(noAssignAdapter);
         }
+    }
+
+    public void refresh() {
+        // Implement refresh
     }
 
     @Override
@@ -138,8 +157,18 @@ public class ReportListAdminFragment extends Fragment {
             }
         });
 
+        noAssignAdapter.setOnItemClickListener(new ReportsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                Report selectReport = noAssignReport.get(position);
+                Intent intent = new Intent(getContext(), AssignStaffActivity.class);
+                intent.putExtra(Constants.REPORT_OBJ, Parcels.wrap(selectReport));
+                startActivity(intent);
+            }
+        });
+
         rvReportList.addItemDecoration(new SpaceItemDecoration(16));
-        rvReportList.setAdapter(adapter);
+        rvReportList.setAdapter(noAssignAdapter);
         rvReportList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return view;

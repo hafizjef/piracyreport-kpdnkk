@@ -1,5 +1,7 @@
 package utem.workshop.piracyreport;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,10 +11,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -50,21 +58,42 @@ public class LoginActivity extends AppCompatActivity {
         setSupportActionBar(loginToolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-// ...
         mAuth = FirebaseAuth.getInstance();
+
+        etPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    doLogin();
+                }
+                return false;
+            }
+        });
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!TextUtils.isEmpty(etEmail.getText())
-                        && !TextUtils.isEmpty(etPassword.getText())
-                        && Patterns.EMAIL_ADDRESS.matcher(etEmail.getText()).matches()) {
-
-                    signIn(etEmail.getText().toString(), etPassword.getText().toString());
-                }
-
+                doLogin();
             }
         });
+    }
+
+    private void doLogin() {
+        if (!TextUtils.isEmpty(etEmail.getText())
+                && !TextUtils.isEmpty(etPassword.getText())
+                && Patterns.EMAIL_ADDRESS.matcher(etEmail.getText()).matches()) {
+
+            signIn(etEmail.getText().toString(), etPassword.getText().toString());
+        } else {
+            new MaterialDialog.Builder(LoginActivity.this)
+                    .title("Input Error")
+                    .content("Invalid email/password combination, Please check your input")
+                    .positiveText("OK")
+                    .show();
+            etEmail.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(etEmail, InputMethodManager.SHOW_FORCED);
+        }
     }
 
     @Override
@@ -79,6 +108,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void signIn(String email, String password) {
+        final ProgressDialog loginDialog = new ProgressDialog(this);
+        loginDialog.setTitle("Loading");
+        loginDialog.setMessage("Please wait, Logging In...");
+        loginDialog.setCancelable(false);
+        loginDialog.show();
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -92,35 +127,33 @@ public class LoginActivity extends AppCompatActivity {
 
                             mData.keepSynced(true);
 
-                            mData.child("keep-sync").setValue("delete-this", new DatabaseReference.CompletionListener() {
+                            mData.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                    mData.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            Timber.i("Name: " + dataSnapshot.child("name").getValue());
-                                            Timber.i("Is Admin: " + dataSnapshot.child("isAdmin").getValue());
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Timber.i("Name: " + dataSnapshot.child("name").getValue());
+                                    Timber.i("Is Admin: " + dataSnapshot.child("isAdmin").getValue());
 
 
-                                            if ((boolean) dataSnapshot.child("isAdmin").getValue()) {
-                                                intent = new Intent(getBaseContext(), AdminActivity.class);
-                                            } else {
-                                                intent = new Intent(getBaseContext(), MainActivity.class);
-                                            }
+                                    if ((boolean) dataSnapshot.child("isAdmin").getValue()) {
+                                        intent = new Intent(getBaseContext(), AdminActivity.class);
+                                    } else {
+                                        intent = new Intent(getBaseContext(), StaffActivity.class);
+                                    }
 
-                                            startActivity(intent);
-                                            finish();
-                                        }
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    loginDialog.dismiss();
+                                    startActivity(intent);
+                                    finish();
+                                }
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-                                        }
-                                    });
                                 }
                             });
-
                         } else {
+                            loginDialog.dismiss();
+                            Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             Timber.i("ERROR:" + task.getException());
                         }
                     }

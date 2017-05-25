@@ -68,8 +68,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity
+            android:name=".AssignStaffActivity"
+            android:parentActivityName=".AdminActivity">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
         <activity android:name=".AdminActivity" />
-        <activity android:name=".AssignStaffActivity"></activity>
+        <activity android:name=".StaffActivity" />
+        <activity android:name=".StaffActionActivity"></activity>
     </application>
 
 </manifest>

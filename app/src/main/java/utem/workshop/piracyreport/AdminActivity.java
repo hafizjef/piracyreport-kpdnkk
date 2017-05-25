@@ -13,9 +13,12 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import utem.workshop.piracyreport.fragments.ReportListAdminFragment;
 import utem.workshop.piracyreport.fragmentsAdapter.AdminFragmentAdapter;
 
 public class AdminActivity extends AppCompatActivity {
+
+    private AdminFragmentAdapter adapter;
 
     @BindView(R.id.admin_viewpager)
     ViewPager adminViewpager;
@@ -33,16 +36,30 @@ public class AdminActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
-        adminViewpager.setAdapter(new AdminFragmentAdapter(getSupportFragmentManager(),
-                AdminActivity.this));
+        adapter = new AdminFragmentAdapter(getSupportFragmentManager(), this);
 
+        adminViewpager.setAdapter(adapter);
+
+        adminViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        ((ReportListAdminFragment)adapter.getItem(position)).refresh();
+                    case 1:
+                }
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
         adminTabLayout.setupWithViewPager(adminViewpager);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.admin_menu, menu);
         return true;
     }
 
@@ -54,7 +71,7 @@ public class AdminActivity extends AppCompatActivity {
         if (id == R.id.admin_logout) {
             FirebaseAuth mAuth = FirebaseAuth.getInstance();
             mAuth.signOut();
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
         }

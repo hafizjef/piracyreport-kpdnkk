@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import utem.workshop.piracyreport.fragments.ReportListAdminFragment;
+import utem.workshop.piracyreport.fragments.StatisticFragment;
 
 /**
  * Created by max on 22/5/17.
@@ -28,7 +29,7 @@ public class AdminFragmentAdapter extends FragmentPagerAdapter {
             case 0:
                 return ReportListAdminFragment.newInstance(position);
             default:
-                return ReportListAdminFragment.newInstance(position);
+                return StatisticFragment.newInstance();
         }
     }
 

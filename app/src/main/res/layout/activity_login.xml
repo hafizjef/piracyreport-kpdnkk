@@ -68,6 +68,7 @@
                 android:layout_centerVertical="true"
                 android:ems="10"
                 android:hint="Password"
+                android:imeOptions="actionDone"
                 android:inputType="textPassword" />
 
         </android.support.design.widget.TextInputLayout>

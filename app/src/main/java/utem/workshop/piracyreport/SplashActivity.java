@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,6 +31,7 @@ public class SplashActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        FirebaseApp.initializeApp(this);
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         if (mAuth.getCurrentUser() != null) {
@@ -41,31 +43,26 @@ public class SplashActivity extends AppCompatActivity {
 
             mData.keepSynced(true);
 
-            mData.child("keepSync").setValue(true, new DatabaseReference.CompletionListener() {
+            mData.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                    mData.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Timber.i("Name: " + dataSnapshot.child("name").getValue());
-                            Timber.i("Is Admin: " + dataSnapshot.child("isAdmin").getValue());
-                            isAdmin = (boolean) dataSnapshot.child("isAdmin").getValue();
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Timber.i("Name: " + dataSnapshot.child("name").getValue());
+                    Timber.i("Is Admin: " + dataSnapshot.child("isAdmin").getValue());
+                    isAdmin = (boolean) dataSnapshot.child("isAdmin").getValue();
 
-                            if (isAdmin) {
-                                intent = new Intent(getBaseContext(), AdminActivity.class);
-                            } else {
-                                intent = new Intent(getBaseContext(), MainActivity.class);
-                            }
+                    if (isAdmin) {
+                        intent = new Intent(getBaseContext(), AdminActivity.class);
+                    } else {
+                        intent = new Intent(getBaseContext(), StaffActivity.class);
+                    }
 
-                            startActivity(intent);
-                            finish();
-                        }
+                    startActivity(intent);
+                    finish();
+                }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
                 }
             });
         } else {

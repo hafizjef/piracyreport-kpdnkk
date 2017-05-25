@@ -68,7 +68,7 @@ public class ReportsAdapter extends RecyclerView.Adapter<ReportsAdapter.ViewHold
 
         tv_address.setText(report.getAddress());
         tv_state.setText(report.getState());
-        tv_assign.setText(report.getAssignedName());
+        tv_assign.setText(report.getAssigned() + " (" + report.getStatus() + ")");
         tv_mail.setText(report.getEmail());
         tv_time.setText(sdf.format(new Date(report.getTimeStamp())));
     }

@@ -12,6 +12,7 @@ public class Report {
             brand, description, address, state;
 
     String reportID;
+    String assignedID = "0x00";
     String assigned = Constants.NOT_ASSIGNED;
     String status = Constants.ACTION_QUEUE;
     String remark = "";
@@ -149,19 +150,7 @@ public class Report {
         this.reportID = reportID;
     }
 
-    public String getAssignedName() {
-        try {
-            return assigned.split(":")[1];
-        } catch (Exception e) {
-            return assigned;
-        }
-    }
-
     public String getAssignedID() {
-        try {
-            return assigned.split(":")[0];
-        } catch (Exception e) {
-            return assigned;
-        }
+        return assignedID;
     }
 }

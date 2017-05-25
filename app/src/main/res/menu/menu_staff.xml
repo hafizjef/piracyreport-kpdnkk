@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/item_unassigned"
+        android:id="@+id/show_all_report"
         android:checkable="true"
         android:icon="@android:drawable/ic_menu_preferences"
-        android:title="Unassigned Only"
+        android:title="Show All"
         android:titleCondensed="Persist" />
 
     <item
-        android:id="@+id/admin_logout"
+        android:id="@+id/staff_logout"
         android:title="Logout" />
 </menu>
