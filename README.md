@@ -16,18 +16,18 @@ required.
 - Send notification emails (System)
 
 ### External Libs
-- Firebase (Realtime DB, Data Storage, Authentication)
-- Timber (Logging)
-- Android Support libs (Material Design & Compatibility Support. E.g: Cardview, RecyclerView)
-- Butterknife (View Binding, no more findViewById yeay!)
-- Glide (Image loading & caching. OOM?)
-- Image picker (picking image, lol)
-- Leku (Location picker)
-- Compressor (Image compression)
-- Parceler (POJO -> Android Parcelable)
-- gson (JSON Parser)
-- Retrofit (HTTP Client)
-- MPAndroidChart (Charting)
+- [Firebase](https://firebase.google.com/) (Realtime DB, Data Storage, Authentication)
+- [Timber](https://github.com/JakeWharton/timber) (Logging)
+- [Android Support libs](https://developer.android.com/topic/libraries/support-library/index.html) (Material Design & Compatibility Support. E.g: Cardview, RecyclerView)
+- [Butterknife](http://jakewharton.github.io/butterknife/) (View Binding, no more findViewById yeay!)
+- [Glide](https://github.com/bumptech/glide) (Image loading & caching. OOM?)
+- [Image picker](https://github.com/esafirm/android-image-picker) (picking image, lol)
+- [Leku](https://github.com/SchibstedSpain/Leku) (Map Location picker)
+- [Compressor](https://github.com/zetbaitsu/Compressor) (Image compression)
+- [Parceler](http://parceler.org/) (POJO -> Android Parcelable)
+- [gson](https://github.com/google/gson) (JSON Parser)
+- [Retrofit](http://square.github.io/retrofit/) (HTTP Client)
+- [MPAndroidChart](https://github.com/PhilJay/MPAndroidChart) (Charting)
 
 ## Dev Setups
 **Prerequisites**
@@ -38,6 +38,6 @@ required.
 1. Clone this repository: `git clone https://github.com/sudoes/piracyreport-kpdnkk/`
 2. Open project using Android studio
 3. Clean & Rebuild the project
-4. Open console.firebase.google.com and create a new project
+4. Open [console.firebase.google.com](https://console.firebase.google.com/) and create a new project
 5. Download `google-services.json` from firebase console to the root_project_dir/app
 6. Install apk to devices (play service required)
