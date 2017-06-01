@@ -30,3 +30,14 @@ required.
 - MPAndroidChart (Charting)
 
 ## Dev Setups
+**Prerequisites**
+- Android Studio
+- Firebase Account
+
+**Setup**
+1. Clone this repository: `git clone https://github.com/sudoes/piracyreport-kpdnkk/`
+2. Open project using Android studio
+3. Clean & Rebuild the project
+4. Open console.firebase.google.com and create a new project
+5. Download `google-services.json` from firebase console to the root_project_dir/app
+6. Install apk to devices (play service required)
